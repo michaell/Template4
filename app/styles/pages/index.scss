@@ -1,0 +1,26 @@
+section {
+    display: flex;
+    height: 100vh;
+    background-position: 50% 0;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.first {
+    background-image: url(../images/site_prev.png);
+}
+
+.second {
+    background-image: url(../images/header_bg1.jpg);
+}
+
+.third {
+    background-image: url(../images/map.jpg);
+}
+
+.title {
+    margin: auto;
+    font: bold 80px Arial;
+    color: black;
+    text-transform: uppercase;
+}

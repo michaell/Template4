@@ -1,0 +1,58 @@
+%clearfix {
+    &:after {
+        content:"";
+        display: block;
+        clear: both;
+    }
+}
+
+@mixin lines {
+    position: relative;
+    &:after {
+        content:"";
+        display: block;
+        width: 22px;
+        height: 5px;
+        opacity: 0.2;
+        background-color: #373e42;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 120px;
+    }
+    &:before {
+        content:"";
+        display: block;
+        width: 22px;
+        height: 5px;
+        opacity: 0.2;
+        background-color: #373e42;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 120px;
+    }
+}
+
+/*---------------------breakpoints--------------------*/
+//1200-1800
+@mixin laptops {
+    @media (max-width: $laptops){
+      @content;
+    }
+}
+  
+  //768-1200
+  @mixin tablets {
+    @media (max-width: $tablets){
+      @content;
+    }
+}
+  
+  //320-768
+  @mixin phones {
+    @media (max-width: $phones){
+      @content; 
+    }
+}
+  

@@ -1,0 +1,34 @@
+
+/*-----------------------------layout----------------------------*/
+$container-width: 1180px;
+$footer-height: 140px;
+
+/*-----------------------------colors----------------------------*/
+$blue: rgb(0, 191, 165);
+$lightBlue: #20b5a1;
+$gray: #455a64;
+$black: #373e42;
+$yellowish: #f0efe9;
+
+
+
+/*-----------------------------fonts----------------------------*/
+$RobotoBold: 'Roboto Bold', Helvetica, Arial, sans-serif;
+$RobotoBoldItalic: 'Roboto Bold Italic', Helvetica, Arial, sans-serif;
+$RobotoItalic: 'Roboto Italic', Helvetica, Arial, sans-serif;
+$RobotoLight: 'Roboto Light', Helvetica, Arial, sans-serif;
+$RobotoLightItalic: 'Roboto Light Italic', Helvetica, Arial, sans-serif;
+$RobotoMedium: 'Roboto Medium', Helvetica, Arial, sans-serif;
+$RobotoMediumItalic: 'Roboto Medium Italic', Helvetica, Arial, sans-serif;
+$Roboto: 'Roboto Regular', Helvetica, Arial, sans-serif;
+
+$FontAwesomeWebfont: 'FontAwesome webfont', Baskerville, serif;
+$FontAwesome: 'FontAwesome', Baskerville, serif;
+$Sansus: 'Sansus Webissimo Regular', Baskerville, serif;
+$Bernier: "Bernier Regular",  Baskerville, serif;
+
+/*-----------------------------screen resolutions----------------------------*/
+
+$laptops: 1800px;
+$tablets: 1200px;
+$phones: 768px;
