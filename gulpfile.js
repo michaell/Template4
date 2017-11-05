@@ -87,6 +87,10 @@ let vendorCss = [
 function templates() {
     return gulp.src('./app/templates/pages/*.pug')
         .pipe(pug({ pretty: true }))
+        .on('error', function (error) {
+            console.log(error);
+            this.end();
+            })
         .pipe(gulp.dest(paths.root));
 }
 
