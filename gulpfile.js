@@ -15,7 +15,7 @@ const notify = require('gulp-notify');
 const concat = require('gulp-concat');
 
 
-/*--------------------------pathes--------------------------*/
+/*--------------------------paths--------------------------*/
 const paths = {
     root: './dist',
     styles: {
@@ -85,7 +85,8 @@ let vendorCss = [
 
 /*--------------------------pug--------------------------*/
 function templates() {
-    return gulp.src('./app/templates/pages/*.pug')
+    // return gulp.src('./app/templates/pages/*.pug')
+    return gulp.src(paths.templates.src)
         .pipe(pug({ pretty: true }))
         .on('error', notify.onError(function(error) {
             return {
@@ -128,7 +129,7 @@ function styles() {
         .pipe(minifycss())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(paths.styles.dest))
-        .pipe(browserSync.stream())       
+        .pipe(browserSync.stream());      
 }
 
 /*-------combining outer plugins and style libraries--------*/
@@ -137,7 +138,7 @@ function vendorCSS(){
         .src(vendorCss)
         .pipe(concat('vendor.min.css'))
         .pipe(gulp.dest(paths.styles.dest))
-};
+}
  
 
 /*------------------------build folder cleaning------------------------*/
@@ -171,12 +172,11 @@ function server() {
     browserSync.init({
         server: paths.root   
     });
-    // browserSync.watch(paths.root + '/**/*.*', browserSync.reload);
     browserSync.watch([paths.root, '!**/*.css'], browserSync.reload);
 }
 
 /*-------function exports to start them from the console-------*/
-exports.clean = clean;
+exports.clean = clean; 
 exports.styles = styles;
 exports.scripts = scripts;
 exports.templates = templates;
