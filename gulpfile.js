@@ -87,20 +87,39 @@ let vendorCss = [
 function templates() {
     return gulp.src('./app/templates/pages/*.pug')
         .pipe(pug({ pretty: true }))
-        .on('error', function (error) {
-            console.log(error);
-            this.end();
-            })
+        .on('error', notify.onError(function(error) {
+            return {
+                title: 'Styles',
+                message: error.message
+            };
+        }))
+        // .pipe(plumber({
+        //     errorHandler: notify.onError(function(error) {
+        //         return {
+        //             title: 'Style', 
+        //             message: error.message
+        //         };
+        //     })
+        // }))
         .pipe(gulp.dest(paths.root));
 }
 
 /*--------------------------styles--------------------------*/
 function styles() {
     return gulp.src('./app/styles/app.scss')
-        .pipe(plumber({
-            errorHandler: notify.onError(function (err){
-                return {title: 'Style', message: err.message}
-            })
+        // .pipe(plumber({
+        //     errorHandler: notify.onError(function (error) {
+        //         return {
+        //             title: 'Style', 
+        //             message: error.message
+        //         };
+        //     })
+        // }))
+        .on('error', notify.onError(function(error) {
+            return {
+                title: 'Styles',
+                message: error.message
+            };
         }))
         .pipe(sourcemaps.init())
         .pipe(sass())
