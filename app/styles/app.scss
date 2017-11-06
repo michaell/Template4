@@ -1,8 +1,9 @@
-@import 'common/technologies';
-@import 'common/slider';
-@import 'common/menu';
-@import 'common/buttons';
-@import 'common/forms';
+/*-----------------------------elements----------------------------*/
+@import 'elements/technologies';
+@import 'elements/slider';
+@import 'elements/menu';
+@import 'elements/buttons';
+@import 'elements/forms';
 
 
 /*-----------------------------helpers----------------------------*/
@@ -16,9 +17,11 @@
 @import "layout/layout";
 
 /*-----------------------------sections----------------------------*/
-@import "pages/footer";
-@import "pages/header";
 @import "pages/index";
 @import "pages/blog";
 @import "pages/about";
 @import "pages/my-works";
+
+/*-----------------------------footer and header----------------------------*/
+@import "common/footer";
+@import "common/header";

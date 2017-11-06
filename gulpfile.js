@@ -19,6 +19,7 @@ const concat = require('gulp-concat');
 const paths = {
     root: './dist',
     styles: {
+        entry: 'app/styles/app.scss',   
         src: 'app/styles/**/*.scss',
         dest: 'dist/assets/styles/'
     },
@@ -27,6 +28,7 @@ const paths = {
         dest: 'dist/assets/scripts/'
     },
     templates: {
+        pages: 'app/templates/pages/*.pug',
         src: 'app/templates/**/*.pug',
         dest: 'dist/assets/'
     },
@@ -84,9 +86,8 @@ let vendorCss = [
 ];
 
 /*--------------------------pug--------------------------*/
-function templates() {
-    // return gulp.src('./app/templates/pages/*.pug')
-    return gulp.src(paths.templates.src)
+function templates() {               
+    return gulp.src(paths.templates.pages)
         .pipe(pug({ pretty: true }))
         .on('error', notify.onError(function(error) {
             return {
@@ -107,7 +108,7 @@ function templates() {
 
 /*--------------------------styles--------------------------*/
 function styles() {
-    return gulp.src('./app/styles/app.scss')
+    return gulp.src(paths.styles.entry)
         // .pipe(plumber({
         //     errorHandler: notify.onError(function (error) {
         //         return {
@@ -116,14 +117,14 @@ function styles() {
         //         };
         //     })
         // }))
-        .on('error', notify.onError(function(error) {
-            return {
-                title: 'Styles',
-                message: error.message
-            };
-        }))
+        // .on('error', notify.onError(function(error) {
+        //     return {
+        //         title: 'Styles',
+        //         message: error.message
+        //     };
+        // }))   
         .pipe(sourcemaps.init())
-        .pipe(sass())
+        .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer('last 4 versions'))        
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
@@ -164,7 +165,8 @@ function watch() {
     gulp.watch(vendorCss, vendorCSS);
     gulp.watch(paths.styles.src, styles);
     gulp.watch(paths.templates.src, templates);
-    gulp.watch(paths.images.src, images, fonts);
+    gulp.watch(paths.images.src, images);
+    gulp.watch(paths.fonts.src, fonts);
 }
 
 /*------------------------server------------------------*/
