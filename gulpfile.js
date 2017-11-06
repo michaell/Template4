@@ -14,6 +14,13 @@ const plumber = require('gulp-plumber');
 const notify = require('gulp-notify');
 const concat = require('gulp-concat');
 
+// sprites
+const svgmin = require('gulp-svgmin');
+const cheerio = require('gulp-cheerio');
+const svgSprite = require('gulp-svg-sprite');
+const replace = require('gulp-replace');
+
+
 
 /*--------------------------paths--------------------------*/
 const paths = {
@@ -33,8 +40,12 @@ const paths = {
         dest: 'dist/assets/'
     },
     images: {
-        src: 'app/images/**/*.*',
+        src: 'app/images/**/*.{jpg,png,svg,gif}', // add other file types if needed
         dest: 'dist/assets/images/'
+    },
+    sprites: {
+        src: 'app/sprites/**/*.svg',
+        dest: 'app/images/'
     },
     fonts: {
         src: 'app/fonts/**/*.*',
@@ -43,8 +54,6 @@ const paths = {
 };
 
 /*------------pathes to JS files------------*/
-
-
 let moduleJs = [
     'app/scripts/common/blur.js',
     'app/scripts/common/test.js'
@@ -153,6 +162,39 @@ function images() {
           .pipe(gulp.dest(paths.images.dest));
 }
 
+/*------------------------svg sprites------------------------*/
+function toSvg() {
+    return gulp.src(paths.sprites.src)
+        .pipe(svgmin({
+            js2svg: {
+                pretty: true
+            }
+        }))
+        .pipe(cheerio({
+            run: function($) {
+                $('[fill]').removeAttr('fill');
+                $('[stroke]').removeAttr('stroke');
+                $('[style]').removeAttr('style');
+            },
+            parserOptions: {
+                xmlMode: true
+            }
+        })
+    )
+    .pipe(replace('&gt;', '>'))
+    .pipe(svgSprite({
+        mode: {
+            symbol: {
+                sprite: "../sprite.svg",
+                example: {
+                    dest: '../tmp/spriteSvgDemo.html'
+                }
+            }
+        }
+    }))
+    .pipe(gulp.dest(paths.sprites.dest))
+}
+
 /*------------------------fonts transfer------------------------*/
 function fonts() {
     return gulp.src(paths.fonts.src)
@@ -165,6 +207,7 @@ function watch() {
     gulp.watch(vendorCss, vendorCSS);
     gulp.watch(paths.styles.src, styles);
     gulp.watch(paths.templates.src, templates);
+    gulp.watch(paths.sprites.src, toSvg);
     gulp.watch(paths.images.src, images);
     gulp.watch(paths.fonts.src, fonts);
 }
@@ -187,10 +230,12 @@ exports.fonts = fonts;
 exports.watch = watch;
 exports.server = server;
 exports.vendorCSS = vendorCSS;
+exports.toSvg = toSvg;
+
 
 /*------------------------build and watch------------------------*/
 gulp.task('default', gulp.series(
     clean,
-    gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts),
+    gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg),
     gulp.parallel(watch, server)
 ));
