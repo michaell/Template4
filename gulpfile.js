@@ -142,6 +142,7 @@ function templates() {
 /*--------------------------styles--------------------------*/
 function styles() {
     return gulp.src(paths.styles.entry)
+        .pipe(wait(500))
         .pipe(plumber({
             errorHandler: notify.onError(function (error) {
                 return {
@@ -149,7 +150,7 @@ function styles() {
                     message: error.message
                 }
             })
-        }))   
+        }))
         .pipe(gulpIf(isDevelopment, sourcemaps.init()))
         .pipe(sass())
         .pipe(autoprefixer('last 4 versions'))        
@@ -254,4 +255,15 @@ gulp.task('default', gulp.series(
     clean,
     gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg),
     gulp.parallel(watch, server)
+));
+
+
+// gulp.task('default', gulp.series(
+//     gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg),
+//     gulp.parallel(watch, server)
+// ));
+
+gulp.task('build', gulp.series(
+    clean,
+    gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg)
 ));

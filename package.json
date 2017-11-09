@@ -5,6 +5,11 @@
   "main": "gulpfile.js",
   "keywords": [],
   "author": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+    // "start": "set NODE_ENV=development & gulp",
+    // "build": "set NODE_ENV=production & gulp build"
+  },
   "license": "ISC",
   "devDependencies": {
     "browser-sync": "^2.18.13",
