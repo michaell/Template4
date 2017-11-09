@@ -1,26 +1,36 @@
-const gulp = require('gulp');
+const gulp         = require('gulp');
 
-const del = require('del');
-const browserSync = require('browser-sync').create();
-const pug = require('gulp-pug');
+// templates
+const pug          = require('gulp-pug');
 
 // styles 
-const sass = require('gulp-sass');
-const rename = require('gulp-rename');
-const sourcemaps = require('gulp-sourcemaps');
+const sass         = require('gulp-sass');
+const rename       = require('gulp-rename');
+const sourcemaps   = require('gulp-sourcemaps');
 const autoprefixer = require('gulp-autoprefixer');
-const minifycss = require('gulp-csso');
-const plumber = require('gulp-plumber');
-const notify = require('gulp-notify');
-const concat = require('gulp-concat');
+const minifycss    = require('gulp-csso');
 
 // sprites
-const svgmin = require('gulp-svgmin');
-const cheerio = require('gulp-cheerio');
-const svgSprite = require('gulp-svg-sprite');
-const replace = require('gulp-replace');
+const svgmin       = require('gulp-svgmin');
+const cheerio      = require('gulp-cheerio');
+const svgSprite    = require('gulp-svg-sprite');
+const replace      = require('gulp-replace');
 
+// images
+const imagemin     = require('gulp-imagemin');
+const cache        = require('gulp-cache');
 
+// scripts
+const uglify       = require('gulp-uglify');
+
+// general
+const gulpIf       = require('gulp-if');
+const plumber      = require('gulp-plumber');
+const notify       = require('gulp-notify');
+const concat       = require('gulp-concat');
+const wait         = require('gulp-wait');
+const del          = require('del');
+const browserSync  = require('browser-sync').create();
 
 /*--------------------------paths--------------------------*/
 const paths = {
@@ -40,7 +50,7 @@ const paths = {
         dest: 'dist/assets/'
     },
     images: {
-        src: 'app/images/**/*.{jpg,png,svg,gif}', // add other file types if needed
+        src: 'app/images/**/*.{jpg,png,svg}', // add other file types if needed
         dest: 'dist/assets/images/'
     },
     sprites: {
@@ -53,17 +63,48 @@ const paths = {
     }
 };
 
-/*------------pathes to JS files------------*/
+/* ------ Конфигурация и настройка сборки  -------- */
+const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
+
+
+/*------------paths to JS files------------*/
 let moduleJs = [
     'app/scripts/common/blur.js',
     'app/scripts/common/test.js'
 ];
 
-/*------------pathes to outer plugins and JS libraries------------*/
+/*****************************------------JS and CSS libraries------------*****************************/
+
+/*------------paths to plugins and JS libraries------------*/
 
 let vendorJs = [
-    'node_modules/jquery/dist/jquery.min.js'
+    'node_modules/jquery/dist/jquery.min.js' // если подключаем jQuery плагины, то их ставить в массив ПОСЛЕ самого jQuery
 ];
+
+/*------------pathes to plugins and style libraries------------*/
+let vendorCss = [
+    'node_modules/normalize-css/normalize.css'
+];
+
+/*-------combining plugins and JS libraries in one file--------*/
+function vendorJS() {
+    return gulp
+    .src(vendorJs)
+    .pipe(concat('vendor.min.js'))
+    .pipe(gulp.dest(paths.scripts.dest));
+};
+
+/*-------combining plugins and style libraries--------*/
+function vendorCSS(){
+    return gulp
+        .src(vendorCss)
+        .pipe(concat('vendor.min.css'))
+        .pipe(minifycss())
+        .pipe(gulp.dest(paths.styles.dest))
+}
+
+/*****************************-----------------------------------------------*****************************/
+
 
 //js
 function scripts(){
@@ -73,93 +114,62 @@ function scripts(){
                 return {title: 'javaScript', message: err.message}
             })
         }))
-        // .pipe(gulpIf(isDevelopment, sourcemaps.init()))
+        .pipe(gulpIf(isDevelopment, sourcemaps.init()))
         .pipe(concat('main.min.js'))
-        // .pipe(uglify())
-        // .pipe(gulpIf(isDevelopment, sourcemaps.write())) //write sourcemaps in dev mode
+        .pipe(uglify())
+        .pipe(gulpIf(isDevelopment, sourcemaps.write())) //write sourcemaps in dev mode
         .pipe(gulp.dest(paths.scripts.dest));
 };
 
-/*-------combining outer plugins and JS libraries in one file--------*/
-function vendorJS() {
-    return gulp
-    .src(vendorJs)
-    .pipe(concat('vendor.min.js'))
-    .pipe(gulp.dest(paths.scripts.dest));
-};
-
-
-/*------------pathes to outer plugins and style libraries------------*/
-let vendorCss = [
-    'node_modules/normalize-css/normalize.css'
-];
 
 /*--------------------------pug--------------------------*/
 function templates() {               
     return gulp.src(paths.templates.pages)
-        .pipe(pug({ pretty: true }))
-        .on('error', notify.onError(function(error) {
-            return {
-                title: 'Styles',
-                message: error.message
-            };
+        .pipe(plumber({
+            errorHandler: notify.onError(function (error) {
+                return {
+                    title: 'Pug', 
+                    message: error.message
+                }
+            })
         }))
-        // .pipe(plumber({
-        //     errorHandler: notify.onError(function(error) {
-        //         return {
-        //             title: 'Style', 
-        //             message: error.message
-        //         };
-        //     })
-        // }))
-        .pipe(gulp.dest(paths.root));
+        .pipe(pug({ pretty: true }))
+        .pipe(gulp.dest(paths.root))
+        .pipe(wait(500)) //на всякий случай. У меня без этого работает ОК, но Юры на созвоне иногда страница перезагружалась, не успев отрисоваться
+        .pipe(browserSync.stream({ once: true }));
 }
 
 /*--------------------------styles--------------------------*/
 function styles() {
     return gulp.src(paths.styles.entry)
-        // .pipe(plumber({
-        //     errorHandler: notify.onError(function (error) {
-        //         return {
-        //             title: 'Style', 
-        //             message: error.message
-        //         };
-        //     })
-        // }))
-        // .on('error', notify.onError(function(error) {
-        //     return {
-        //         title: 'Styles',
-        //         message: error.message
-        //     };
-        // }))   
-        .pipe(sourcemaps.init())
-        .pipe(sass().on('error', sass.logError))
+        .pipe(plumber({
+            errorHandler: notify.onError(function (error) {
+                return {
+                    title: 'Style', 
+                    message: error.message
+                }
+            })
+        }))   
+        .pipe(gulpIf(isDevelopment, sourcemaps.init()))
+        .pipe(sass())
         .pipe(autoprefixer('last 4 versions'))        
         .pipe(rename({suffix: '.min'}))
         .pipe(minifycss())
-        .pipe(sourcemaps.write())
+        .pipe(gulpIf(isDevelopment, sourcemaps.write()))
         .pipe(gulp.dest(paths.styles.dest))
         .pipe(browserSync.stream());      
 }
-
-/*-------combining outer plugins and style libraries--------*/
-function vendorCSS(){
-    return gulp
-        .src(vendorCss)
-        .pipe(concat('vendor.min.css'))
-        .pipe(gulp.dest(paths.styles.dest))
-}
- 
 
 /*------------------------build folder cleaning------------------------*/
 function clean() {
     return del(paths.root);
 }
 
-/*------------------------images transfer------------------------*/
+/*------------------------images transfer and optimisation------------------------*/
 function images() {
     return gulp.src(paths.images.src)
-          .pipe(gulp.dest(paths.images.dest));
+        .pipe(cache(imagemin({optimisationLevel: 3, progressive: true, interlaced: true})))
+        .pipe(gulp.dest(paths.images.dest));
 }
 
 /*------------------------svg sprites------------------------*/
@@ -205,6 +215,7 @@ function fonts() {
 function watch() {
     gulp.watch(paths.scripts.src, scripts);
     gulp.watch(vendorCss, vendorCSS);
+    gulp.watch(vendorJs, vendorJS);
     gulp.watch(paths.styles.src, styles);
     gulp.watch(paths.templates.src, templates);
     gulp.watch(paths.sprites.src, toSvg);
@@ -215,9 +226,13 @@ function watch() {
 /*------------------------server------------------------*/
 function server() {
     browserSync.init({
-        server: paths.root   
+        server: paths.root,
+        open: false
     });
-    browserSync.watch([paths.root, '!**/*.css'], browserSync.reload);
+    browserSync.watch(
+        [paths.root + '**/*.*'], {ignored: ['**/*.css', '**/*.html']},
+        browserSync.reload
+    );
 }
 
 /*-------function exports to start them from the console-------*/
@@ -230,6 +245,7 @@ exports.fonts = fonts;
 exports.watch = watch;
 exports.server = server;
 exports.vendorCSS = vendorCSS;
+exports.vendorJS = vendorJS;
 exports.toSvg = toSvg;
 
 
