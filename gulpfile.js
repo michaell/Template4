@@ -64,7 +64,8 @@ const paths = {
 };
 
 /* ------ Конфигурация и настройка сборки  -------- */
-const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
+// const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
+const isDevelopment = true;
 
 
 /*------------paths to JS files------------*/
@@ -136,11 +137,12 @@ function templates() {
         .pipe(pug({ pretty: true }))
         .pipe(gulp.dest(paths.root))
         .pipe(wait(500)) //на всякий случай. У меня без этого работает ОК, но Юры на созвоне иногда страница перезагружалась, не успев отрисоваться
-        .pipe(browserSync.stream({ once: true }));
+        .pipe(browserSync.stream({ once: true }))
 }
 
 /*--------------------------styles--------------------------*/
 function styles() {
+    console.log(isDevelopment);
     return gulp.src(paths.styles.entry)
         .pipe(wait(500))
         .pipe(plumber({
@@ -250,20 +252,24 @@ exports.vendorJS = vendorJS;
 exports.toSvg = toSvg;
 
 
+
 /*------------------------build and watch------------------------*/
-gulp.task('default', gulp.series(
-    clean,
-    gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg),
-    gulp.parallel(watch, server)
-));
-
-
 // gulp.task('default', gulp.series(
+//     clean,
 //     gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg),
 //     gulp.parallel(watch, server)
 // ));
+
+
+gulp.task('default', gulp.series(
+    gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg),
+    gulp.parallel(watch, server)
+));
 
 gulp.task('build', gulp.series(
     clean,
     gulp.parallel(styles, vendorCSS, scripts, vendorJS, templates, images, fonts, toSvg)
 ));
+
+
+
