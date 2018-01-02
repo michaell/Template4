@@ -10,6 +10,8 @@ body, html {
 }
 
 body {
+    display: flex;
+    flex-direction: column;
     font-family: $default-font;
     font-size: 16px;
     line-height: 1.42;
@@ -19,12 +21,12 @@ body {
 .container {
     width: $container-width;
     margin: 0 auto;
-    @include tablets {
-        width: 720px;
-    }
-    @include phones {
-        width: 95%;               
-    }
+    // @include tablets {
+    //     width: 720px;
+    // }
+    // @include phones {
+    //     width: 95%;               
+    // }
 }
 
 .main {
@@ -33,22 +35,8 @@ body {
 
 .wrapper {
     overflow: hidden;
-    min-height: 100%;
-    
-    // min-width: $container-width + 20px;
-
-//     &:after {               //footer fixing
-//         content: "";
-//         display: block; 
-//         height: $footer-height;
-//     }
+    flex: 1 0 auto;
 }
-
-// footer {
-//     height: $footer-height;           //footer fixing
-//     margin-top: -$footer-height;
-//     min-width: $container-width + 20px;
-// }
 
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
