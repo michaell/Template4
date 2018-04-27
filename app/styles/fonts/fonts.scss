@@ -14,15 +14,15 @@
 /**************************************** Site fonts ****************************************/
 /*---------------------Scriptina--------------------*/
 @font-face {
-    font-family: 'Scriptina';
-    src: url('../fonts/Scriptina/Scriptina.eot'); // для IE 9 работающего в режиме совместимости с IE 8
-    src: url('../fonts/Scriptina/Scriptina.eot?#iefix') format('embedded-opentype'), // для IE 6-8
-         url('../fonts/Scriptina/Scriptina.woff2') format('woff2'), // самые современные браузеры
-         url('../fonts/Scriptina/Scriptina.woff') format('woff'), // для IE 9 и большинства современных браузеров
-         url('../fonts/Scriptina/Scriptina.ttf') format('truetype'); // iOS и Android
-        //  url('../fonts/Scriptina/Scriptina.svg#svgFontName') format('svg'); // древние iOS устройства
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'Scriptina';
+	src: url('../fonts/Scriptina/Scriptina.eot'); // для IE 9 работающего в режиме совместимости с IE 8
+	src: url('../fonts/Scriptina/Scriptina.eot?#iefix') format('embedded-opentype'), // для IE 6-8
+		url('../fonts/Scriptina/Scriptina.woff2') format('woff2'), // самые современные браузеры
+		url('../fonts/Scriptina/Scriptina.woff') format('woff'), // для IE 9 и большинства современных браузеров
+		url('../fonts/Scriptina/Scriptina.ttf') format('truetype'); // iOS и Android
+		//  url('../fonts/Scriptina/Scriptina.svg#svgFontName') format('svg'); // древние iOS устройства
+	font-weight: normal;
+	font-style: normal;
 }
 
 /*---------------------Proxima--------------------*/
