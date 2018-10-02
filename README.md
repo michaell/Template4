@@ -14,3 +14,4 @@ npm run build
 1. Периодически глючит browser-sync: начинает брать не текущую, а какую-то старую таблицу стилей.
 2. Не работает автоматическое распознование isDevelopment
 Для финальной сборки пректа раскомментировать const isDevelopment = false и после этого набрать в консоли npm run build# template-Win10
+# template-Win10
